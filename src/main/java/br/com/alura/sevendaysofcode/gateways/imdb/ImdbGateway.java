@@ -1,6 +1,6 @@
-package br.com.alura.sevendaysofcode.services;
+package br.com.alura.sevendaysofcode.gateways.imdb;
 
-import br.com.alura.sevendaysofcode.controller.dto.MovieResponseDTO;
+import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -8,24 +8,24 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 
 @Service
-public class MovieService {
+public class ImdbGateway {
 
     private RestTemplate restTemplate;
     private String imdbApiKey;
     private String imdbHost;
 
-    public MovieService(RestTemplate restTemplate,
-                        @Value("${gateway.processor.imdb.api-key}") String imdbApiKey,
-                        @Value("${gateway.processor.imdb.host}") String imdbHost) {
+    public ImdbGateway(RestTemplate restTemplate,
+                       @Value("${gateway.processor.imdb.api-key}") String imdbApiKey,
+                       @Value("${gateway.processor.imdb.host}") String imdbHost) {
         this.restTemplate = restTemplate;
         this.imdbApiKey = imdbApiKey;
         this.imdbHost = imdbHost;
     }
 
-    public MovieResponseDTO getTop250Movies() {
+    public ImdbMovieResponseDTO getTop250Movies() {
         return restTemplate.getForObject(
                 imdbHost + imdbApiKey,
-                MovieResponseDTO.class,
+                ImdbMovieResponseDTO.class,
                 new HashMap<>());
     }
 
