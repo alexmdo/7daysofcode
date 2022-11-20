@@ -1,12 +1,12 @@
 package br.com.alura.sevendaysofcode.controller;
 
-import br.com.alura.sevendaysofcode.controller.dto.MovieResponseDTO;
-import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
-import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
-import br.com.alura.sevendaysofcode.mapper.MovieImdbMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.alura.sevendaysofcode.controller.dto.MovieResponseDTO;
+import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
+import br.com.alura.sevendaysofcode.mapper.MovieImdbMapper;
 
 @RestController
 @RequestMapping("/movies")
