@@ -5,24 +5,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alura.sevendaysofcode.controller.dto.MovieResponseDTO;
-import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
-import br.com.alura.sevendaysofcode.mapper.MovieImdbMapper;
+import br.com.alura.sevendaysofcode.service.MovieService;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
 
-    private ImdbGateway imdbGateway;
-    private MovieImdbMapper movieImdbMapper;
+    private MovieService movieService;
+    
 
-    public MovieController(ImdbGateway imdbGateway, MovieImdbMapper movieImdbMapper) {
-        this.imdbGateway = imdbGateway;
-        this.movieImdbMapper = movieImdbMapper;
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
     }
 
     @GetMapping("/top250")
     public MovieResponseDTO getTop250Movies() {
-        return movieImdbMapper.toMovieResponseDTO(imdbGateway.getTop250Movies());
+        return movieService.getTop250Movies();
     }
 
 }
