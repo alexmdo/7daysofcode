@@ -1,4 +1,4 @@
-package br.com.alura.sevendaysofcode.tasks;
+package br.com.alura.sevendaysofcode.service.tasks;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

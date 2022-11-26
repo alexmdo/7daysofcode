@@ -1,4 +1,4 @@
-package br.com.alura.sevendaysofcode.model;
+package br.com.alura.sevendaysofcode.service.repository.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

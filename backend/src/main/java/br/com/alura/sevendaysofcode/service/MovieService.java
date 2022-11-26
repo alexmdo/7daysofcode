@@ -2,14 +2,15 @@ package br.com.alura.sevendaysofcode.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.alura.sevendaysofcode.controller.dto.MovieResponseDTO;
+import br.com.alura.sevendaysofcode.controller.dto.MovieItemDTO;
 import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
 import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
-import br.com.alura.sevendaysofcode.mapper.MovieImdbMapper;
-import br.com.alura.sevendaysofcode.model.Movie;
-import br.com.alura.sevendaysofcode.repository.MovieRepository;
+import br.com.alura.sevendaysofcode.service.repository.MovieRepository;
+import br.com.alura.sevendaysofcode.service.repository.model.Movie;
 import lombok.extern.log4j.Log4j2;
 
 @Service
@@ -17,17 +18,15 @@ import lombok.extern.log4j.Log4j2;
 public class MovieService {
     
     private final ImdbGateway gateway;
-    private final MovieImdbMapper movieImdbMapper;
     private final MovieRepository movieRepository;
 
-    public MovieService(ImdbGateway gateway, MovieImdbMapper movieImdbMapper, MovieRepository movieRepository) {
+    public MovieService(ImdbGateway gateway, MovieRepository movieRepository) {
         this.gateway = gateway;
-        this.movieImdbMapper = movieImdbMapper;
         this.movieRepository = movieRepository;
     }
 
-    public MovieResponseDTO getTop250Movies() {
-        return movieImdbMapper.toMovieResponseDTO(movieRepository.findAll());
+    public Page<MovieItemDTO> getTop250Movies(Pageable pageable) {
+        return movieRepository.findAll(pageable).map(MovieItemDTO::new);
     }
 
     public void fetchAndImport250Movies() {
@@ -42,6 +41,11 @@ public class MovieService {
         movieRepository.saveAll(movies);
 
         log.warn("fetchAndImport250Movies executed successfully!");
+    }
+
+    public Page<MovieItemDTO> findByTitleContaining(String title, Pageable pageable) {
+        Page<Movie> movies = movieRepository.findByTitleContaining(title, pageable);
+        return movies.map(MovieItemDTO::new);
     }
 
 }
