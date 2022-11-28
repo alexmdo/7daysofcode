@@ -1,6 +1,7 @@
 package br.com.alura.sevendaysofcode.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 import br.com.alura.sevendaysofcode.controller.dto.MovieItemDTO;
 import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
 import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
+import br.com.alura.sevendaysofcode.service.repository.FavoriteMovieRepository;
 import br.com.alura.sevendaysofcode.service.repository.MovieRepository;
+import br.com.alura.sevendaysofcode.service.repository.model.FavoriteMovie;
 import br.com.alura.sevendaysofcode.service.repository.model.Movie;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,10 +22,12 @@ public class MovieService {
     
     private final ImdbGateway gateway;
     private final MovieRepository movieRepository;
+    private final FavoriteMovieRepository favoriteMovieRepository;
 
-    public MovieService(ImdbGateway gateway, MovieRepository movieRepository) {
+    public MovieService(ImdbGateway gateway, MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository) {
         this.gateway = gateway;
         this.movieRepository = movieRepository;
+        this.favoriteMovieRepository = favoriteMovieRepository;
     }
 
     public Page<MovieItemDTO> getTop250Movies(Pageable pageable) {
@@ -46,6 +51,18 @@ public class MovieService {
     public Page<MovieItemDTO> findByTitleContaining(String title, Pageable pageable) {
         Page<Movie> movies = movieRepository.findByTitleContaining(title, pageable);
         return movies.map(MovieItemDTO::new);
+    }
+
+    public FavoriteMovieDTO addFavoriteMovie(Long movieId) {
+        Optional<Movie> movieOpt = movieRepository.findById(movieId);
+        if (movieOpt.isPresent()) {
+            Movie movie = movieOpt.get();
+            FavoriteMovie favoriteMovie = new FavoriteMovie(null, movie);
+            favoriteMovieRepository.save(favoriteMovie);
+            return new FavoriteMovieDTO(favoriteMovie.getId(), movie.getId());
+        }
+
+        return null;
     }
 
 }
