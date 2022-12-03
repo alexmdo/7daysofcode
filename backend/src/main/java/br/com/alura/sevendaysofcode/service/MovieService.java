@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.alura.sevendaysofcode.controller.dto.MovieItemDTO;
 import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
 import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
+import br.com.alura.sevendaysofcode.service.exception.NotFoundException;
 import br.com.alura.sevendaysofcode.service.repository.FavoriteMovieRepository;
 import br.com.alura.sevendaysofcode.service.repository.MovieRepository;
 import br.com.alura.sevendaysofcode.service.repository.model.FavoriteMovie;
@@ -19,12 +20,13 @@ import lombok.extern.log4j.Log4j2;
 @Service
 @Log4j2
 public class MovieService {
-    
+
     private final ImdbGateway gateway;
     private final MovieRepository movieRepository;
     private final FavoriteMovieRepository favoriteMovieRepository;
 
-    public MovieService(ImdbGateway gateway, MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository) {
+    public MovieService(ImdbGateway gateway, MovieRepository movieRepository,
+            FavoriteMovieRepository favoriteMovieRepository) {
         this.gateway = gateway;
         this.movieRepository = movieRepository;
         this.favoriteMovieRepository = favoriteMovieRepository;
@@ -37,7 +39,7 @@ public class MovieService {
     public void fetchAndImport250Movies() {
         log.warn("Deleting all movies");
         movieRepository.deleteAll();
-        
+
         log.warn("Fetching top 250 movies from IMDB processor");
         ImdbMovieResponseDTO top250Movies = gateway.getTop250Movies();
 
@@ -55,14 +57,12 @@ public class MovieService {
 
     public FavoriteMovieDTO addFavoriteMovie(Long movieId) {
         Optional<Movie> movieOpt = movieRepository.findById(movieId);
-        if (movieOpt.isPresent()) {
-            Movie movie = movieOpt.get();
-            FavoriteMovie favoriteMovie = new FavoriteMovie(null, movie);
-            favoriteMovieRepository.save(favoriteMovie);
-            return new FavoriteMovieDTO(favoriteMovie.getId(), movie.getId());
-        }
 
-        return null;
+        Movie movie  = movieOpt.orElseThrow(() -> new NotFoundException("Movie not found given id " + movieId));
+
+        FavoriteMovie favoriteMovie = new FavoriteMovie(null, movie);
+        favoriteMovieRepository.save(favoriteMovie);
+        return new FavoriteMovieDTO(favoriteMovie.getId(), movie.getId());
     }
 
 }
