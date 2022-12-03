@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.alura.sevendaysofcode.controller.dto.AddFavoriteMovieResponseDTO;
+import br.com.alura.sevendaysofcode.controller.dto.FavoriteMovieResponseDTO;
 import br.com.alura.sevendaysofcode.controller.dto.MovieItemDTO;
 import br.com.alura.sevendaysofcode.gateways.imdb.ImdbGateway;
 import br.com.alura.sevendaysofcode.gateways.imdb.dto.ImdbMovieResponseDTO;
@@ -55,14 +57,20 @@ public class MovieService {
         return movies.map(MovieItemDTO::new);
     }
 
-    public FavoriteMovieDTO addFavoriteMovie(Long movieId) {
+    public AddFavoriteMovieResponseDTO addFavoriteMovie(Long movieId) {
         Optional<Movie> movieOpt = movieRepository.findById(movieId);
 
         Movie movie  = movieOpt.orElseThrow(() -> new NotFoundException("Movie not found given id " + movieId));
 
         FavoriteMovie favoriteMovie = new FavoriteMovie(null, movie);
         favoriteMovieRepository.save(favoriteMovie);
-        return new FavoriteMovieDTO(favoriteMovie.getId(), movie.getId());
+        return new AddFavoriteMovieResponseDTO(favoriteMovie.getId(), movie.getId());
+    }
+
+    public FavoriteMovieResponseDTO getFavoriteMovieById(Long favoriteMovieId) {
+        var favoriteMovieOpt = favoriteMovieRepository.findById(favoriteMovieId);
+        var favoriteMovie = favoriteMovieOpt.orElseThrow(() -> new NotFoundException("Favorite movie not found given id " + favoriteMovieId));
+        return new FavoriteMovieResponseDTO(favoriteMovieId, new MovieItemDTO(favoriteMovie.getMovie()));
     }
 
 }
