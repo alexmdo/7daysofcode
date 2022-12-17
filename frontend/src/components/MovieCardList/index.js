@@ -13,7 +13,7 @@ export default function MovieCardList({ data, page }) {
         <Container>
             <Row className="justify-content-md-between">
                 {movies.map(({ id, title, urlImage, rating, year }) => (
-                    <MovieCardItem key={id} title={title} urlImage={urlImage} rating={rating} year={year} />
+                    <MovieCardItem key={id} id={id} title={title} urlImage={urlImage} rating={rating} year={year} />
                 ))}
             </Row>
             <Pagination page={page} totalPages={totalPages} isFirst={isFirst} isLast={isLast} />
