@@ -73,4 +73,8 @@ public class MovieService {
         return new FavoriteMovieResponseDTO(favoriteMovieId, new MovieItemDTO(favoriteMovie.getMovie()));
     }
 
+    public Page<FavoriteMovieResponseDTO> getAllFavorityMovies(Pageable pageable) {
+        return favoriteMovieRepository.findAll(pageable).map(FavoriteMovieResponseDTO::new);
+    }
+
 }

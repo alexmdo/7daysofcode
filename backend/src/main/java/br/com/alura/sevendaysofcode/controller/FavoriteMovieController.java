@@ -2,6 +2,10 @@ package br.com.alura.sevendaysofcode.controller;
 
 import java.net.URI;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,14 +32,21 @@ public class FavoriteMovieController {
 
     @PostMapping
     public ResponseEntity<AddFavoriteMovieResponseDTO> addFavoriteMovie(@RequestBody AddFavoritoMovieDTO dto) {
-        AddFavoriteMovieResponseDTO favoriteMovieDTO = movieService.addFavoriteMovie(dto.movieId());;
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{movieId}").buildAndExpand(favoriteMovieDTO.favoriteMovieId()).toUri();
+        AddFavoriteMovieResponseDTO favoriteMovieDTO = movieService.addFavoriteMovie(dto.movieId());
+        ;
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{movieId}")
+                .buildAndExpand(favoriteMovieDTO.favoriteMovieId()).toUri();
         return ResponseEntity.created(location).body(favoriteMovieDTO);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteMovieResponseDTO> getFavorityMovieById(@PathVariable Long id) {
         return ResponseEntity.ok().body(movieService.getFavoriteMovieById(id));
+    }
+
+    @GetMapping
+    public Page<FavoriteMovieResponseDTO> getAllFavorityMovies(@PageableDefault(sort = "id", direction = Direction.ASC, size = 10) Pageable pageable) {
+        return movieService.getAllFavorityMovies(pageable);
     }
 
 }
