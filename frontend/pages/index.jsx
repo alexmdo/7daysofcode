@@ -1,8 +1,9 @@
+import axios from 'axios';
 import Index from '../src/components/Index'
 
 export async function getServerSideProps({ query: { page = 0 } }) {
-  const res = await fetch(`http://localhost:8080/movies/top250?page=${page}`);
-  const data = await res.json();
+  const res = await axios.get(`http://localhost:8080/movies/top250?page=${page}`);
+  const data = res.data;
   return {
     props: {
       data,
